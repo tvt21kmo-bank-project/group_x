@@ -46,6 +46,7 @@ void MainWindow::getBookSlot(QNetworkReply *reply)
     manager->deleteLater();
 }
 
+
 void MainWindow::on_btnShowOneBook_clicked()
 {
     QString site_url="http://localhost:3000/book/1";
@@ -55,8 +56,18 @@ void MainWindow::on_btnShowOneBook_clicked()
     QByteArray data = credentials.toLocal8Bit().toBase64();
     QString headerData = "Basic " + data;
     request.setRawHeader( "Authorization", headerData.toLocal8Bit() );
-    manager = new QNetworkAccessManager(this);
-    connect(manager, SIGNAL(finished (QNetworkReply*)),
-    this, SLOT(getBookSlot(QNetworkReply*)));
-    reply = manager->get(request);
+    oneBookManager = new QNetworkAccessManager(this);
+    connect(oneBookManager, SIGNAL(finished (QNetworkReply*)),
+    this, SLOT(getOneBookSlot(QNetworkReply*)));
+    reply = oneBookManager->get(request);
+}
+void MainWindow::getOneBookSlot(QNetworkReply *reply)
+{
+    QByteArray response_data=reply->readAll();
+    QJsonDocument json_doc = QJsonDocument::fromJson(response_data);
+    QJsonArray json_array = json_doc.array();
+    QJsonObject json_obj = json_array[0].toObject();
+    qDebug()<<json_obj["name"];
+    QString book=json_obj["name"].toString()+" : "+json_obj["author"].toString()+" : "+json_obj["isbn"].toString();
+    ui->txtBooks->setText(book);
 }

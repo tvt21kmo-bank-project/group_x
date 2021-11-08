@@ -21,12 +21,14 @@ public:
 private slots:
     void on_btnShowBooks_clicked();
     void getBookSlot (QNetworkReply *reply);
+    void getOneBookSlot (QNetworkReply *reply);
 
     void on_btnShowOneBook_clicked();
 
 private:
     Ui::MainWindow *ui;
     QNetworkAccessManager *manager;
+    QNetworkAccessManager *oneBookManager;
     QNetworkReply *reply;
 };
 #endif // MAINWINDOW_H
