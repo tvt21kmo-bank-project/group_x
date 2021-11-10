@@ -31,7 +31,7 @@ CREATE TABLE `action` (
   `action_time` timestamp NULL DEFAULT NULL,
   `amount` double DEFAULT NULL,
   PRIMARY KEY (`idaction`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -40,7 +40,7 @@ CREATE TABLE `action` (
 
 LOCK TABLES `action` WRITE;
 /*!40000 ALTER TABLE `action` DISABLE KEYS */;
-INSERT INTO `action` VALUES (1,1,'withdrawal','2021-11-03 17:27:32',100),(2,2,'deposit','2021-11-03 17:27:32',100);
+INSERT INTO `action` VALUES (1,1,'withdrawal','2021-11-03 17:27:32',100),(2,2,'deposit','2021-11-03 17:27:32',100),(3,1,'withdrawal','2021-11-09 12:39:27',20),(4,1,'deposit','2021-11-09 12:39:27',20),(5,1,'withdrawal','2021-11-09 12:39:52',20),(6,2,'deposit','2021-11-09 12:39:52',20),(7,1,'withdrawal','2021-11-09 12:40:35',50),(8,2,'deposit','2021-11-09 12:40:35',50),(9,1,'nosto','2021-11-10 15:11:23',30),(10,2,'talletus','2021-11-10 15:11:23',30),(11,2,'withdrawal','2021-11-10 15:48:57',100),(12,1,'deposit','2021-11-10 15:48:57',100),(13,2,'withdrawal','2021-11-10 15:51:37',100),(14,1,'deposit','2021-11-10 15:51:37',100),(15,1,'nosto','2021-11-10 15:53:20',10),(16,1,'talletus','2021-11-10 15:53:20',10),(17,1,'nosto','2021-11-10 15:54:36',15),(18,2,'talletus','2021-11-10 15:54:36',15),(19,1,'nosto','2021-11-10 16:30:32',35),(20,2,'talletus','2021-11-10 16:30:32',35),(21,1,'nosto','2021-11-10 16:31:38',45),(22,2,'talletus','2021-11-10 16:31:38',45),(23,2,'nosto','2021-11-10 16:39:28',50),(24,1,'talletus','2021-11-10 16:39:28',50);
 /*!40000 ALTER TABLE `action` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -64,7 +64,7 @@ CREATE TABLE `bank_account` (
 
 LOCK TABLES `bank_account` WRITE;
 /*!40000 ALTER TABLE `bank_account` DISABLE KEYS */;
-INSERT INTO `bank_account` VALUES (1,400),(2,600);
+INSERT INTO `bank_account` VALUES (1,455),(2,545);
 /*!40000 ALTER TABLE `bank_account` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -81,7 +81,7 @@ CREATE TABLE `book` (
   `author` varchar(255) DEFAULT NULL,
   `isbn` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`id_book`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -90,7 +90,7 @@ CREATE TABLE `book` (
 
 LOCK TABLES `book` WRITE;
 /*!40000 ALTER TABLE `book` DISABLE KEYS */;
-INSERT INTO `book` VALUES (1,'Koe päivitys','Ville Virta','23-43-5-65'),(2,'Statistics','Lisa Smith','222-333-444-555-y'),(3,'Express Api','Tim Tailor','23-45-67'),(4,'New Express','Lisa Smith','56-78-90'),(7,'Keskiviikko','Liisa Joki','12-34-56-78'),(13,'Keskiviikko','Liisa Joki','12-34-56-78');
+INSERT INTO `book` VALUES (1,'Koe päivitys','Ville Virta','23-43-5-65'),(2,'Statistics','Lisa Smith','222-333-444-555-y'),(3,'Express Api','Tim Tailor','23-45-67'),(4,'New Express','Lisa Smith','56-78-90'),(7,'Keskiviikko','Liisa Joki','12-34-56-78'),(13,'Keskiviikko','Liisa Joki','12-34-56-78'),(14,'Keskiviikko','Liisa Joki','12-34-56-78');
 /*!40000 ALTER TABLE `book` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -185,7 +185,7 @@ CREATE TABLE `user_table` (
   `password` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id_user`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -227,6 +227,37 @@ BEGIN
       ROLLBACK;
   END IF;
   END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `debit_transfer` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `debit_transfer`(IN first_id INT, IN second_id INT, IN amount DOUBLE )
+BEGIN
+  DECLARE test1, test2 INT DEFAULT 0;
+  START TRANSACTION;
+  UPDATE bank_account SET balance=balance-amount WHERE idaccount=first_id AND balance>=amount;
+  SET test1=ROW_COUNT();
+  UPDATE bank_account SET balance=balance+amount WHERE idaccount=second_id;
+  SET test2=ROW_COUNT();
+    IF (test1 > 0 AND test2 >0) THEN
+      COMMIT;
+      INSERT INTO action(idaccount,action,amount,action_time) VALUES(first_id,'nosto',amount, NOW());
+      INSERT INTO action(idaccount,action,amount,action_time) VALUES(second_id,'talletus',amount, NOW());
+    ELSE
+      ROLLBACK;
+  END IF;
+END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
@@ -280,4 +311,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-11-08 19:07:31
+-- Dump completed on 2021-11-10 18:42:24

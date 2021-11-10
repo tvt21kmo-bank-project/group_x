@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "pankki.h"
+
 #include <QMainWindow>
 #include <QtNetwork>
 #include <QNetworkAccessManager>
@@ -34,5 +36,6 @@ private:
     QNetworkAccessManager *oneBookManager;
     QNetworkAccessManager *loginManager;
     QNetworkReply *reply;
+    Pankki *objPankki;
 };
 #endif // MAINWINDOW_H
