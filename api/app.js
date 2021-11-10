@@ -26,6 +26,7 @@ var bookRouter = require('./routes/book');
 var borrowerRouter = require('./routes/borrower');
 var userRouter = require('./routes/user');
 var loginRouter = require('./routes/login');
+var bankRouter = require('./routes/bank');
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -37,5 +38,6 @@ app.use('/book', bookRouter);
 app.use('/borrower', borrowerRouter);
 app.use('/user', userRouter);
 app.use('/login', loginRouter);
+app.use('/bank', bankRouter);
 
 module.exports = app;
