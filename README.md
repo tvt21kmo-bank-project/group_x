@@ -1,9 +1,20 @@
 # Penkkiprojekti
 
+# kansio bankautomat
+
+Kansiossa on Qt:lla tehty frontend sovellus.
+
 # kansio api
 
-Kansiossa on sovelluksen REST API
+Kansiossa on sovelluksen REST API. Jotta se toimii, on omassa MySQL-palvelimessa ajettava kansiosta löytyvä <b>dump.sql</b>
 
+Ja lisäksi kansioon on luotava <b>.env</b> tiedosto, jonka sisältö on
+<pre>
+authUser='newAdmin'
+authPass='newPass'
+
+MYSQL = "mysql://netuser:netpass@localhost:3306/netdb"
+</pre>
 ## bank-osan analyysi
 
 ### routes/bank.js
