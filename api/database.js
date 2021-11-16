@@ -1,4 +1,5 @@
 const mysql = require('mysql');
 
-const connection = mysql.createConnection(process.env.MYSQL);
+const connection = mysql.createPool(process.env.MYSQL);
+
 module.exports = connection;
