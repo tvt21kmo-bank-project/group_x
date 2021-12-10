@@ -15,7 +15,7 @@ class Pankki : public QDialog
     Q_OBJECT
 
 public:
-    explicit Pankki(QWidget *parent = nullptr);
+    explicit Pankki(QString id,QWidget *parent = nullptr);
     ~Pankki();
 
 private slots:

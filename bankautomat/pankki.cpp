@@ -1,11 +1,12 @@
 #include "pankki.h"
 #include "ui_pankki.h"
 
-Pankki::Pankki(QWidget *parent) :
+Pankki::Pankki(QString id, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Pankki)
 {
     ui->setupUi(this);
+    ui->leDebitMaksaja->setText(id);
 }
 
 Pankki::~Pankki()

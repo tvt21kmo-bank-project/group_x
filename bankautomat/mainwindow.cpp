@@ -6,7 +6,6 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    objPankki=new Pankki;
 }
 
 MainWindow::~MainWindow()
@@ -77,6 +76,7 @@ void MainWindow::getOneBookSlot(QNetworkReply *reply)
 
 void MainWindow::on_btnLogin_clicked()
 {
+    username=ui->lineEditUsername->text();
     QJsonObject json; //luodaan JSON objekti ja lisätään data
     json.insert("username",ui->lineEditUsername->text());
     json.insert("password",ui->lineEditPassword->text());
@@ -92,17 +92,41 @@ void MainWindow::on_btnLogin_clicked()
     this, SLOT(loginSlot(QNetworkReply*)));
     reply = loginManager->post(request, QJsonDocument(json).toJson());
 }
+
 void MainWindow::loginSlot(QNetworkReply *reply)
 {
     QByteArray response_data=reply->readAll();
     qDebug()<<response_data;
     if(response_data=="true"){
         qDebug()<<"Oikea tunnus ...avaa form";
-        objPankki->show();
+        GetUserId(username);
     }
     else {
         ui->lineEditPassword->setText("");
         ui->lineEditUsername->setText("");
         qDebug()<<"tunnus ja salasana ei täsmää";
     }
+}
+
+void MainWindow::GetUserIdSlot(QNetworkReply *reply)
+{
+    QByteArray response_data=reply->readAll();
+    qDebug()<<"userid="+response_data;
+    objPankki=new Pankki(response_data);
+    objPankki->show();
+}
+
+void MainWindow::GetUserId(QString uname)
+{
+    QString site_url="http://localhost:3000/user/userid/"+uname;
+    QString credentials="newAdmin:newPass";
+    QNetworkRequest request((site_url));
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    QByteArray data = credentials.toLocal8Bit().toBase64();
+    QString headerData = "Basic " + data;
+    request.setRawHeader( "Authorization", headerData.toLocal8Bit() );
+    getUserIdManager = new QNetworkAccessManager(this);
+    connect(getUserIdManager, SIGNAL(finished (QNetworkReply*)),
+    this, SLOT(GetUserIdSlot(QNetworkReply*)));
+    reply = getUserIdManager->get(request);
 }

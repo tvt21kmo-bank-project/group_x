@@ -29,13 +29,17 @@ private slots:
     void on_btnShowOneBook_clicked();
 
     void on_btnLogin_clicked();
+    void GetUserIdSlot (QNetworkReply *reply);
 
 private:
     Ui::MainWindow *ui;
     QNetworkAccessManager *manager;
     QNetworkAccessManager *oneBookManager;
     QNetworkAccessManager *loginManager;
+    QNetworkAccessManager *getUserIdManager;
     QNetworkReply *reply;
     Pankki *objPankki;
+    QString username;
+    void GetUserId(QString uname);
 };
 #endif // MAINWINDOW_H
